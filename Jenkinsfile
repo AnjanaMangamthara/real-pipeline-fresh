@@ -11,7 +11,7 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                echo "Testing Jenkins at $(date)"
+                echo "Testing Jenkins at"
                 sh 'docker build -t pipeline-app .'
             }
         }
