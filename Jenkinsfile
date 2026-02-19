@@ -26,7 +26,9 @@ pipeline {
                     docker rm $CONTAINER_ID
                 fi
 
-                docker run -d -p 3000:3000 --name pipeline-container pipeline-app
+                docker run -d -p 8080:8080 -p 50000:50000 \
+  		-v /var/run/docker.sock:/var/run/docker.sock \
+  		--name jenkins-local jenkins/jenkins:lts
                 '''
             }
         }
