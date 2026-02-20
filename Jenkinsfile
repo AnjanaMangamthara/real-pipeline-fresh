@@ -26,7 +26,7 @@ pipeline {
                     docker rm $CONTAINER_ID
                 fi
 
-                docker run -d -p 3000:3000 --name pipeline-containernew pipeline-app
+                docker run -d -p 3000:3000 --name pipeline-containernew1 pipeline-app
                 '''
             }
         }
