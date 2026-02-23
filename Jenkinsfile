@@ -1,6 +1,11 @@
 pipeline {
     agent any
 
+    environment {
+        IMAGE_NAME = "anjana1234okok/myapp"
+        TAG = "v1"
+    }
+
     stages {
 
         stage('Clone Code') {
@@ -9,25 +14,28 @@ pipeline {
             }
         }
 
-        stage('Build Docker Image') {
+        stage('Build Image') {
             steps {
-                echo "Testing Jenkins at"
-                sh 'docker build -t pipeline-app .'
+                sh 'docker build -t $IMAGE_NAME:$TAG .'
             }
         }
 
-        stage('Deploy') {
+        stage('Login to DockerHub') {
             steps {
-                sh '''
-                CONTAINER_ID=$(docker ps -q --filter "publish=3000")
+                withCredentials([usernamePassword(credentialsId: 'dockerhub-creds',
+                usernameVariable: 'DOCKER_USER',
+                passwordVariable: 'DOCKER_PASS')]) {
 
-                if [ ! -z "$CONTAINER_ID" ]; then
-                    docker stop $CONTAINER_ID
-                    docker rm $CONTAINER_ID
-                fi
+                    sh '''
+                    echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
+                    '''
+                }
+            }
+        }
 
-                docker run -d -p 3000:3000 --name pipeline-containernew1 pipeline-app
-                '''
+        stage('Push Image') {
+            steps {
+                sh 'docker push $IMAGE_NAME:$TAG'
             }
         }
 
